@@ -1,0 +1,19 @@
+{
+    "name": "rousi/apigw-request-factory",
+    "type": "library",
+    "require": {
+        "nyholm/psr7": "^1.8"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Apigw\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Rousi - The Red Princess"
+        }
+    ],
+    "minimum-stability": "stable"
+}

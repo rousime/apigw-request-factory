@@ -1,8 +1,10 @@
 {
     "name": "rousi/apigw-request-factory",
+    "description": "PSR Request Factory from aws-based API Gateway Request",
     "type": "library",
     "require": {
-        "nyholm/psr7": "^1.8"
+        "nyholm/psr7": "^1.8",
+        "php": ">=7.4"
     },
     "license": "MIT",
     "autoload": {

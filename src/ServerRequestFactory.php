@@ -13,8 +13,6 @@ class ServerRequestFactory
         'parse_body' => true
     ];
 
-    private const APIGW_HOST = 'apigw.yandexcloud.net';
-
     /**
      * @var string
      */
@@ -49,7 +47,7 @@ class ServerRequestFactory
     }
 
     /**
-     * @param string $event
+     * @param array $event
      * 
      * @return string
      */
@@ -95,7 +93,7 @@ class ServerRequestFactory
     protected static function getServerParams(&$event)
     {
         return [
-            'SERVER_ADDR' =>    static::getServerAddr(),
+            'SERVER_ADDR' =>    static::getServerAddr($event['headers']['Host']),
             'SERVER_NAME' =>    $event['headers']['Host'],
             'SERVER_PROTOCOL' => 'HTTP/2.0',
             'REQUEST_METHOD' => $event['requestContext']['httpMethod'],
@@ -109,13 +107,17 @@ class ServerRequestFactory
     }
 
     /**
+     * @param string $host
+     * 
      * @return string
      */
-    protected static function getServerAddr()
+    protected static function getServerAddr($host)
     {
         if (!isset(static::$serverAddr))
         {
-            foreach (\dns_get_record('apigw.yandexcloud.net', \DNS_A) as $record)
+            static::$serverAddr = '0.0.0.0'; // If the host address cannot be determined by public DNS servers
+
+            foreach (\dns_get_record($host, \DNS_A) as $record)
             {
                 if ($record['type'] == 'A')
                 {
@@ -137,13 +139,11 @@ class ServerRequestFactory
     {
         $cookie = [];
 
-        foreach(\explode('; ', $event['headers']['Cookie']) as $rawCookie)
+        foreach(\explode('; ', $event['headers']['Cookie'] ?? '') as $rawCookie)
         {
-            $cookieData = \explode('=', $rawCookie);
+            [$name, $value] = \explode('=', $rawCookie);
 
-            $cookie[
-                $cookieData[0]
-            ] = $cookieData[1];
+            $cookie[$name] = $value;
         }
 
         return $cookie;
